@@ -15,4 +15,5 @@ public interface UserLikeRepository extends JpaRepository<UserLike, Long> {
     Optional<UserLike> findByUserAndUserLikeTypeAndTypeId(User user, UserLikeType userLikeType, Long typeId);
 
     Optional<List<UserLike>> findAllByUserLikeTypeAndTypeId(UserLikeType userLikeType, Long typeId);
+
 }
