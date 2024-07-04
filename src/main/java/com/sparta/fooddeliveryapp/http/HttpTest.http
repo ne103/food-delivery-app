@@ -1,0 +1,71 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 테스트 제목
+POST http://localhost:8080/api/users/login
+Accept: application/json
+Content-Type: application/json; charset=UTF-8
+
+{
+  "loginId" : "id1111",
+  "password" : "Qwer1111!"
+}
+> {%
+  client.global.set("Authorization", response.headers.valueOf("Authorization"));
+  client.global.set("RefreshToken", response.headers.valueOf("RefreshToken"));
+%}
+
+### a
+GET http://localhost:8080/api/stores?page=0&size=5
+Content-Type: application/json
+
+### 테스트 제목
+POST http://localhost:8080/api/users/login
+Accept: application/json
+Content-Type: application/json; charset=UTF-8
+
+{
+  "loginId" : "id1111",
+  "password" : "Qwer1111!"
+}
+> {%
+  client.global.set("Authorization", response.headers.valueOf("Authorization"));
+  client.global.set("RefreshToken", response.headers.valueOf("RefreshToken"));
+%}
+### 테스트 1
+GET http://localhost:8080/api/auth/test
+Content-Type: application/json; charset=UTF-8
+
+### 테스트 2
+GET http://localhost:8080/api/auth/test2
+Content-Type: application/json; charset=UTF-8
+
+### 테스트 3
+GET http://localhost:8080/api/auth/test3
+Content-Type: application/json; charset=UTF-8
+
+### 로그인 테스트
+POST http://localhost:8080/api/users/signup
+Content-Type: application/json
+
+{
+  "loginId" : "id11111",
+  "password" : "Qwer1111!",
+  "name" : "킹원하",
+  "nickname" : "King",
+  "address" : "너의 맘속",
+  "phone" : "01012341111",
+  "email" : "email1@email.com",
+  "intro" : "원하는 배고파요",
+  "role" : "USER"
+}
+
+### 로그인 테스트
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "loginId" : "id1111",
+  "password" : "Qwer1111!"
+}
