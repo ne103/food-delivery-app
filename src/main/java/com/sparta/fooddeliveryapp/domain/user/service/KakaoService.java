@@ -6,19 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.fooddeliveryapp.domain.user.dto.KakaoUserInfoDto;
 import com.sparta.fooddeliveryapp.domain.user.entity.User;
 import com.sparta.fooddeliveryapp.domain.user.entity.UserRoleEnum;
-import com.sparta.fooddeliveryapp.domain.user.entity.UserStatus;
 import com.sparta.fooddeliveryapp.domain.user.entity.UserStatusEnum;
 import com.sparta.fooddeliveryapp.domain.user.repository.UserRepository;
 import com.sparta.fooddeliveryapp.global.security.JwtUtil;
-
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
