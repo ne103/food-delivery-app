@@ -2,6 +2,7 @@ package com.sparta.fooddeliveryapp.domain.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.fooddeliveryapp.domain.user.dto.*;
+import com.sparta.fooddeliveryapp.domain.user.entity.User;
 import com.sparta.fooddeliveryapp.domain.user.service.KakaoService;
 import com.sparta.fooddeliveryapp.domain.user.service.UserService;
 import com.sparta.fooddeliveryapp.global.common.ResponseDto;
@@ -62,9 +63,28 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ProfileResponseDto getProfile(@Valid @AuthenticationPrincipal UserDetailsImpl userDetails){
-        ProfileResponseDto res = userService.getProfile(userDetails.getUser());
-        return res;
+    public ResponseEntity<ResponseDto> getUserProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        ProfileResponseDto profileResponse = userService.getProfile(user);
+
+        ProfileResponseDto responseDto = new ProfileResponseDto(
+            profileResponse.getUserId(),
+            profileResponse.getName(),
+            profileResponse.getNickname(),
+            profileResponse.getAddress(),
+            profileResponse.getPhone(),
+            profileResponse.getEmail(),
+            profileResponse.getIntro(),
+            profileResponse.getStoreLikeCount(),
+            profileResponse.getReviewLikeCount()
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            ResponseDto.builder()
+                .status(HttpStatus.OK)
+                .message("프로필 조회 성공")
+                .data(responseDto)
+                .build());
     }
 
     @GetMapping("/profile/{nickname}")

@@ -1,12 +1,26 @@
 package com.sparta.fooddeliveryapp.domain.user.entity;
 
-
 import com.sparta.fooddeliveryapp.global.common.TimeStamped;
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostUpdate;
+import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -55,6 +69,7 @@ public class User extends TimeStamped {
     @Column(name = "status")
     private UserStatusEnum status;
 
+    @Setter
     @Column(name = "refresh_token")
     private String refreshToken;
 
@@ -62,8 +77,21 @@ public class User extends TimeStamped {
     @Column(name = "kakao_id")
     private Long kakaoId;
 
-    // image 가져오기
-    // 생성 및 수정 시간은 타 클래스 implement 가져오는걸로
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+    private List<StoreLike> storeLikes = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+    private List<ReviewLike> reviewLikes = new ArrayList<>();
+
+    private int storeLikeCount;
+    private int reviewLikeCount;
+
+    @PostPersist
+    @PostUpdate
+    public void updateLikeCounts() {
+        this.storeLikeCount = this.storeLikes.size();
+        this.reviewLikeCount = this.reviewLikes.size();
+    }
 
     public void setUsedPasswordList(List<UsedPassword> usedPasswordList) {
         this.usedPasswordList.clear();
@@ -72,10 +100,9 @@ public class User extends TimeStamped {
         }
     }
 
-    public void setRefreshToken(String refreshToken){
-        this.refreshToken = refreshToken;
+    public void setStatusDeactivated() {
+        this.status = UserStatusEnum.DEACTIVATED;
     }
-    public void setStatusDeactivated(){ this.status = UserStatusEnum.DEACTIVATED; }
 
     public void updateName(String name){this.name = name;}
     public void updateNickname(String nickname){this.nickname = nickname;}
@@ -84,7 +111,7 @@ public class User extends TimeStamped {
     public void updatePassword(String password){this.password = password;}
 
     public User(String loginId, String password, String name, String nickname, String address, String phone,
-                String email, String intro, UserRoleEnum role, UserStatusEnum status) {
+        String email, String intro, UserRoleEnum role, UserStatusEnum status) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
