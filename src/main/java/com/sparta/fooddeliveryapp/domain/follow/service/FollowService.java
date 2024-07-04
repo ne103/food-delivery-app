@@ -10,7 +10,12 @@ import com.sparta.fooddeliveryapp.domain.store.repository.StoreRepository;
 import com.sparta.fooddeliveryapp.domain.user.entity.User;
 import com.sparta.fooddeliveryapp.global.error.exception.DuplicateLikeException;
 import jakarta.validation.constraints.Null;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,9 +52,10 @@ public class FollowService {
         followRepository.delete(follow);
     }
 
-    public List<FollowResponseDto> getFollowList(User user) {
-        List<Follow> followList = followRepository.findAllByUser(user);
-        return followList.stream().map(
+    public List<FollowResponseDto> getFollowList(User user, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Follow> followPage = followRepository.findAllByUserOrderByCreatedAtDesc(user, pageable);
+        return followPage.stream().map(
                 follow -> FollowResponseDto.builder()
                         .followId(follow.getFollowerId())
                         .storeId(follow.getStore().getStoreId())

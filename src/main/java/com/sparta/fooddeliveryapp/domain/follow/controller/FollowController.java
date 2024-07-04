@@ -52,9 +52,11 @@ public class FollowController {
 
     @GetMapping
     public ResponseEntity<ResponseDto> getFollowList(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-    ){
-        List<FollowResponseDto> followList = followService.getFollowList(userDetails.getUser());
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size
+    ) {
+        List<FollowResponseDto> followList = followService.getFollowList(userDetails.getUser(), page, size);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.builder()
                         .status(HttpStatus.OK)
                         .message("팔로우 조회 성공")

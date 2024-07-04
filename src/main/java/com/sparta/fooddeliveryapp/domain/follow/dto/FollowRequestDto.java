@@ -4,5 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class FollowRequestDto {
+
     private Long storeId;
+
 }
