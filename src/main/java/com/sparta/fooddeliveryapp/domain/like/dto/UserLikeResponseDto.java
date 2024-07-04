@@ -9,7 +9,10 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class UserLikeResponseDto {
+
     private Long userId;
+
     private UserLikeType userLikeType;
+
     private Long typeId;
 }

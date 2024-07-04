@@ -3,10 +3,16 @@ package com.sparta.fooddeliveryapp.domain.like.service;
 import com.sparta.fooddeliveryapp.domain.like.dto.UserLikeRequestDto;
 import com.sparta.fooddeliveryapp.domain.like.dto.UserLikeResponseDto;
 import com.sparta.fooddeliveryapp.domain.like.entity.UserLike;
+import com.sparta.fooddeliveryapp.domain.like.entity.UserLikeType;
 import com.sparta.fooddeliveryapp.domain.like.repository.UserLikeRepository;
 import com.sparta.fooddeliveryapp.domain.user.entity.User;
 import com.sparta.fooddeliveryapp.global.error.exception.DuplicateLikeException;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserLikeService {
+
     private final UserLikeRepository userLikeRepository;
 
     public UserLike addUserLike(User user, UserLikeRequestDto userLikeRequestDto) {
@@ -36,16 +43,30 @@ public class UserLikeService {
         userLikeRepository.delete(userLike);
     }
 
-    public List<UserLikeResponseDto> getUserLike(UserLikeRequestDto userLikeRequestDto) {
-         List<UserLike> userLikeList = userLikeRepository.findAllByUserLikeTypeAndTypeId(userLikeRequestDto.getUserLikeType(), userLikeRequestDto.getTypeId()).orElseThrow(
-                () -> new NullPointerException("등록된 좋아요가 없습니다")
-        );
-        return userLikeList.stream().map(
-                userLike -> UserLikeResponseDto.builder()
-                        .userId(userLike.getUser().getUserId())
-                        .userLikeType(userLike.getUserLikeType())
-                        .typeId(userLike.getTypeId())
-                        .build()
+    public List<UserLikeResponseDto> getUserLike(User user, UserLikeRequestDto userLikeRequestDto, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<UserLike> userLikePage = userLikeRepository.findAllByUserLikeTypeAndTypeIdOrderByCreatedAtDesc(userLikeRequestDto.getUserLikeType(), userLikeRequestDto.getTypeId(), pageable);
+        if (userLikePage.isEmpty()) {
+            throw new NullPointerException("등록된 좋아요가 없습니다");
+        }
+        return userLikePage.stream().map(
+            userLike -> UserLikeResponseDto.builder()
+                .userId(userLike.getUser().getUserId())
+                .userLikeType(userLike.getUserLikeType())
+                .typeId(userLike.getTypeId())
+                .build()
+        ).toList();
+    }
+
+    public List<UserLikeResponseDto> getLikedReview(User user, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<UserLike> likedComments = userLikeRepository.findByUserAndUserLikeTypeOrderByCreatedAtDesc(user, UserLikeType.REVIEW, pageable);
+        return likedComments.stream().map(
+            userLike -> UserLikeResponseDto.builder()
+                .userId(userLike.getUser().getUserId())
+                .userLikeType(userLike.getUserLikeType())
+                .typeId(userLike.getTypeId())
+                .build()
         ).toList();
     }
 }

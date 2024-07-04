@@ -5,6 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class UserLikeRequestDto {
+
     private UserLikeType userLikeType;
+
     private Long typeId;
+
 }
